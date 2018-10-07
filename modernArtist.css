@@ -1,0 +1,294 @@
+body{
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+}
+
+textarea{
+    background: transparent;
+    box-shadow: none;
+    resize: none;
+    vertical-align: 100%;
+}
+
+#canvas{
+    width: 100vw;
+    height: 100vh;
+}
+
+#cog_div{
+    margin-top: -100vh;
+    margin-left: 90vw;
+}
+
+.permanent_buttons{
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    margin-left: -88vw;
+    font-size: 8vh;
+    color: dimgray;
+    opacity: .7;
+}
+
+#cog{
+    color: dimgray;
+    font-size: 8vh;
+    opacity: .7;
+    margin-left: 87.5vw;
+}
+
+#cog:hover{
+    opacity: .9;
+}
+
+#cog:hover ~ .vanishing_buttons{
+    opacity: 1;
+}
+
+#note{
+    color: dimgray;
+    font-size: 8vh;
+    opacity: .7;
+}
+
+#note:hover{
+    color:white;
+    opacity: .9;
+}
+
+#about{
+    margin-top: 15vh;
+    color: dimgray;
+    font-size: 8vh;
+    opacity: .7;
+}
+
+#about:hover{
+    color:white;
+    opacity: .9;
+}
+
+.vanishing_buttons{
+    opacity: 0;
+    animation-name: fade-out;
+    animation-duration: 3s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: 1;
+}
+
+.vanishing_buttons:hover{
+    animation-name: fade-in;
+    animation-duration: .5s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: 1;
+    opacity: 1;
+}
+
+.vanishing_buttons:focus{
+    opacity: 1;
+}
+
+@keyframes fade-in{
+    0% { opacity: 0;}
+    100% { opacity: 1;}
+}
+
+@keyframes fade-out{
+    0% { opacity: 1;}
+    100% { opacity: 0;}
+}
+
+#undo{
+    color: dimgray;
+    font-size: 8vh;
+}
+
+#undo:hover{
+    color:white;
+}
+
+#remove{
+    color: dimgray;
+    font-size: 8vh;
+}
+
+#remove:hover{
+    color:white;
+}
+
+#screenshot{
+    color: dimgray;
+    font-size: 8vh;
+}
+
+#screenshot:hover{
+    color:white;
+}
+
+#picturebook{
+    color: dimgray;
+    z-index: 1000;
+    font-size: 8vh;
+}
+
+#picturebook:hover{
+    color:white;
+}
+
+#new_title{
+    color: dimgray;
+    z-index: 100;
+    font-size: 8vh;
+    margin-left: 60vw;
+    margin-top: -1vh;
+}
+
+#new_title:hover{
+    color:white;
+}
+
+.icon_image{
+    margin-top: 0;
+    margin-left: 2vw;
+}
+
+#pictures{
+    display: none;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    background: rgb(99,29,0);
+    margin-left: -80vw;
+    margin-top: -40vh;
+    width: 80vw;
+    height: 50vh;
+    padding: 5vh;
+    overflow: scroll;
+    border: 1vw solid rgb(79,9,0)
+}
+
+canvas{
+    border: 3vw solid oldlace;
+}
+
+.image_container{
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.title {
+    color: white;
+    font-size: 4vh;
+    font-family: sans-serif;
+    padding: 1vw;
+    width: 25vw;
+    text-align: right;
+}
+
+.attrib{
+    color: white;
+    font-size: 4vh;
+    font-family: sans-serif;
+    padding: 1vw;
+    width: 20vw;
+    text-align: right;
+    margin-left: -11vw;
+    margin-top: 20vh;
+}
+
+
+.picker,.picker_load{
+    z-index: 100;
+    text-align: right;
+    font-size: 15vh;
+    margin-left: -60vw;
+    margin-right: 20vw;
+    color: white;
+    font-family: sans-serif;
+    cursor: pointer;
+    opacity: .65;
+    user-select: none;
+}
+
+.picker_load{
+    animation-name: fade-out;
+    animation-duration: 2s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: 1;
+}
+
+@keyframes picker-fade-out{
+    0% { opacity: 1; display: block;}
+    100% { opacity: 0; display: none;}
+}
+
+#artist_picker{
+    margin-top: -85vh;
+}
+
+#title_container{
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    width: 70vw;
+    margin-top: -20vh;
+    margin-left: -70vw;
+    position: relative;
+    height: 20vh;
+    vertical-align: bottom;
+}
+
+#title_picker{
+    width: 60vw;
+    margin-left: 1vw;
+    margin-top: 4.98vh;
+    height: 20vh;
+    padding-bottom: 5vw;
+    position: absolute;
+    font-size: 7vh;
+    text-align: left;
+    bottom: 0;
+    left: 0;
+    
+}
+
+.picker:hover{
+    opacity: .8;
+    user-select: none;
+}
+
+.picker:focus{
+    outline: none;
+    background: none;
+    color: white;
+    opacity: .8;
+}
+
+.dropdown{
+    z-index: 100;
+    width: 100vw;
+    height: 43vh;
+    margin-left: -49vw;
+    overflow: scroll;
+}
+
+.option{
+    text-align: right;
+    z-index: 100;
+    opacity: .4;
+}
+
+.option:hover{
+    opacity: 1;
+    text-decoration: underline;
+}
+
+.glyphicons{
+    text-shadow: .1vw .15vw whitesmoke;
+}
+
+
+

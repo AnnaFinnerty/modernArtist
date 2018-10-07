@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title> modernArtist </title> 
+    <meta charset="utf-8">
+    <link rel="icon" 
+      type="image/png" 
+      href="favicon.ico">
+    <link rel = "stylesheet"
+          type = "text/css"
+          href = "modernArtist.css" />
+    <link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/glyphicons.css">
+    <audio id="snap">
+      <source src="snap.mp3" type="audio/mpeg">
+      <source src="snap.wav" type="audio/wav">
+      Your browser does not support the audio element.
+    </audio>	      
+  </head>
+  <body>
+
+<div id="canvas"></div>
+
+<div id="menu">
+    <div id="cog_div">
+        <div class="permanent_buttons" id="permanent_buttons">
+            
+            <span id="cog" class="glyphicons glyphicons-cogwheel"></span>
+        </div>
+        <div class="vanishing_buttons" id="vanishing_buttons">
+            <span id="undo" class="glyphicons glyphicons-undo"></span>
+            <span id="remove" class="glyphicons glyphicons-remove"></span>
+            <span id="screenshot" class="glyphicons glyphicons-camera"></span>
+            <div>
+                <span id="picturebook" class="glyphicons glyphicons-book">
+                    <img id="picturebook_container"/>
+                </span>
+            </div>
+            <div id="pictures"></div>
+            <span id="about" class="glyphicons glyphicons-question-sign"></span>
+            <span id="note" class="glyphicons glyphicons-note"></span>
+        </div>
+        <div id="artist_picker" class="picker_load"></div>
+        <div id="canvas_picker" class="picker_load"></div>
+        <div id="title_container">
+               <div id="title_picker" class="picker"></div>
+               <div class="vanishing_buttons" id="vanishing_buttons">
+                   <span id="new_title" class="glyphicons glyphicons-lightbulb"></span>
+               </div>   
+        </div>
+        
+    </div>   
+</div> 
+   
+    <script type="text/javascript" src="html2canvas.js"></script>
+    <script type="text/javascript" src="names.js"></script>
+    <script>
+        /*
+        menu ideas
+        
+        close pickers when photobook it open
+        artist name
+        about page
+        
+        pick by artist ++
+            * Kandinsky (mixed shape)
+            * Mondrian (squares and lines)
+            * Picasso
+            * Kupka (circles)
+            * Matisse
+            * Calder
+            * Jasper Johns
+            * Saul Bass
+            * Rothko
+            * Miro
+            * Georgia O'Keefe
+        show title after snap. Add title add/change button. ++    
+        reset canvas ++
+        undo ++
+        download ++
+        change canvas color ++
+        screenshot ++
+        move pickers to hard-coded elements to all 1) show on intro and 2) ability to include in snaps ++
+        auto title ++
+        */
+        window.addEventListener("DOMContentLoaded", function (event) {
+            
+              //initial build
+              
+
+              var artists = ["random","kandinsky","picasso","mondrian"];
+            
+              var artist = artists[random(artists.length-1)+1];
+              var artist_picker = document.getElementById("artist_picker");
+              artist_picker.innerHTML = artist;
+            
+              //canvas colors
+              var canvasColors = ["dimgray","firebrick","midnightblue","black","gainsboro"];
+              var background = canvasColors[random(canvasColors.length)];
+              var canvas_picker = document.getElementById("canvas_picker");
+              canvas_picker.innerHTML = background;
+             
+            
+             setTimeout(function(){
+                  artist_picker.style.display = "none";
+                  artist_picker.className = "picker";
+                  canvas_picker.style.display = "none";
+                  canvas_picker.className = "picker";
+              },1800)
+            
+              
+              //setting intial colors
+              document.body.style.background = background;
+              var glyphs = document.getElementsByClassName("glyphicons");
+                  glyphs.textShadow = ".1vw .15vw white";
+            
+            
+              //a random function
+              function random(x){
+                  return Math.floor(Math.random()*x)
+              }    
+              
+              //declare color picker
+              var menu = document.getElementById("menu");
+                  menu.style.background = "transparent";
+                  menu.style.position = "fixed";
+                  menu.style.width = "100%";
+                  menu.style.height = "10vw";
+                  menu.style.zIndex = "100";
+             
+            //creates overlay menu based off click from cog
+            var cog = document.getElementById("cog");
+            cog.addEventListener("click",function(){
+                console.log("clicking on the cog!");
+                if(artist_picker.style.display === "none"){
+                    artist_picker.style.display = "block";
+                    canvas_picker.style.display = "block";
+                    build_artist_picker();
+                    build_canvas_picker();
+                } else {
+                    artist_picker.style.display = "none";
+                    canvas_picker.style.display = "none";
+                }
+            })
+             
+             function build_artist_picker(){
+                 console.log("building artist picker!")
+                 //code for artist picker
+                 var artist_picker = document.getElementById("artist_picker");
+                 artist_picker.addEventListener("click",function(e){
+                         console.log("artist select");
+                         var childNodes = artist_picker.childElementCount;
+                         if(childNodes == 0){
+                             var artist_dropdown = document.createElement("DIV");
+                             artist_dropdown.className = "dropdown";
+                             artist_dropdown.id=("artist_dropdown");
+                             for(var i=0;i<artists.length;i++){
+                                     var x = artists[i];
+                                     var artist_option = document.createElement("DIV");
+                                     artist_option.innerHTML = x;
+                                     artist_option.id = x;
+                                     artist_option.className = "option"
+                                 artist_dropdown.appendChild(artist_option);
+                                 
+                             }
+                             artist_picker.appendChild(artist_dropdown)
+
+                             // add clickhandling for canvas picker options
+                             for(var y =0;y<artists.length;y++){
+                                 var option = document.getElementById(artists[y]);
+                                 option.addEventListener("click",function(e){
+                                     const value = e.target.innerHTML;
+                                     console.log("clicking option " + value);
+                                     if(value=="random"){
+                                         artist = artists[random(artists.length-1)+1]
+                                     } else {
+                                         artist = value;
+                                     }
+                                     artist_picker.innerHTML=artist;
+                                     var dropdown = document.getElementById("artist_dropdown");
+                                 })
+                             }
+                         } else {
+                             var dropdown = document.getElementById("artist_dropdown");
+                             artist_picker.removeChild(dropdown);
+                         }
+
+                     })
+             }
+             
+             function build_canvas_picker(){
+                 //code for canvas picker
+              var canvas_picker = document.getElementById("canvas_picker");
+              canvas_picker.addEventListener("click",function(e){
+                     console.log("canvas select");
+                     
+                     //check if menu is already open
+                     var childNodes = canvas_picker.childElementCount;
+                     if(childNodes == 0){
+                         var canvas_dropdown = document.createElement("DIV");
+                             canvas_dropdown.className = "dropdown";
+                             canvas_dropdown.id=("canvas_dropdown");
+                         for(var i = 0;i<canvasColors.length;i++){
+                             var x = canvasColors[i];
+                             console.log(x);
+                             var canvas_option = document.createElement("DIV");
+                                 canvas_option.innerHTML = x;
+                                 canvas_option.id = x;
+                                 canvas_option.className = "option"
+                             canvas_dropdown.appendChild(canvas_option);
+                         }
+                         canvas_picker.appendChild(canvas_dropdown)
+                         
+                         // add clickhandling for canvas picker options
+                         for(var i = 0;i<canvasColors.length;i++){
+                             var x = canvasColors[i];
+                             var option = document.getElementById(x);
+                             option.addEventListener("click",function(e){
+                                 const value = e.target.innerHTML;
+                                 console.log("clicking option " + value)
+                                 document.body.style.background = value;
+                                 canvas_picker.innerHTML=artist;
+                                 var dropdown = document.getElementById("canvas_dropdown");
+                                     canvas_picker.removeChild(dropdown);
+                             })
+                         }
+                     } else {
+                         var dropdown = document.getElementById("canvas_dropdown");
+                         canvas_picker.removeChild(dropdown);
+                     }
+                 })
+             }
+              
+             //counter for addded shapes                          
+              var i = 0;
+   
+     //add new object on click        
+              var canvas = document.getElementById("canvas");
+              canvas.addEventListener("click",function(event){
+                  console.log("clicking!");
+                  console.log("artify test!");
+                  var test = artify("color");
+                  console.log(test);
+                  make_a_shape(event);
+              })
+              
+              //make a shape!
+              function make_a_shape(event){
+                  console.log("making a shape!");
+                  var pop = document.createElement("DIV");
+                      pop.className = "pop";
+                      pop.id = "pop"+i
+                      pop.style.background = artify("color");
+                      pop.style.position = "fixed";
+                      pop.style.marginTop = -(window.innerHeight-event.clientY+100) + "px";
+                      pop.style.marginLeft = event.clientX-100 + "px";
+                      pop.style.height = artify("height")+"px";
+                      pop.style.width = artify("width")+"px";
+                      pop.style.borderStyle = artify("borderStyle");
+                      pop.style.borderBottomWidth = artify("borderBottomWidth")+"px";
+                      pop.style.borderTopWidth = artify("borderTopWidth")+"px";
+                      pop.style.borderRightWidth = artify("borderRightWidth")+"px";
+                      pop.style.borderLeftWidth = artify("borderLeftWidth")+"px";
+                      pop.style.borderBottomLeftRadius = artify("borderBottomLeftRadius")+"px";
+                      pop.style.borderBottomRightRadius = artify("borderBottomRightRadius")+"px";
+                      pop.style.borderTopLeftRadius = artify("borderTopLeftRadius")+"px";
+                      pop.style.borderTopRightRadius = artify("borderTopRightRadius")+"px";
+                      pop.style.borderLeftColor = artify("borderLeftColor");
+                      pop.style.borderRightColor = artify("borderRightColor");
+                      pop.style.borderTopColor = artify("borderTopColor");
+                      pop.style.borderBottomColor = artify("borderBottomColor");
+                      pop.style.transform = "rotate("+artify("rotate")+"deg)";
+                      pop.draggable = "true";
+                  
+                  document.body.appendChild(pop);
+                  // shape div click handler
+                  document.getElementById("pop"+i).addEventListener("click", function(e){
+                      const id = e.target.id;
+                      console.log("clicking " + id);
+                      make_a_shape(e);
+                  })
+                  document.getElementById("pop"+i).addEventListener("drag", function(e){
+                      console.log("dragging!")
+                      e.dataTransfer.setData("text", "pop"+i);
+                  })
+                  
+                  i++
+              }
+              
+              
+              //some places to hold constants
+              var constant1,constant2,constant3,constant4,constant5
+              
+              //apply art values to shapes
+              function artify(property){
+                  
+                  switch(artist){
+                      case "mondrian":
+                          switch(property){
+                                case "color": 
+                                  const c = ["black","dimgray","white","red"];
+                                  var color = c[random(c.length)];
+                                  if(color == background){
+                                      color = c[random(c.length)];
+                                  }
+                                  return color
+                                  break
+                                case "height":
+                                  return random(400);
+                                  break
+                                case "width":
+                                  return random(400);
+                                  break 
+                                case "borderStyle":
+                                    return "solid"
+                                    break
+                                case "borderRightColor":
+                                    return "transparent"
+                                case "borderLeftColor":
+                                    return "transparent"
+                                case "borderTopColor":
+                                    return "transparent"
+                                case "borderBottomColor":
+                                    return "transparent"    
+                                default:
+                                    return 0;      
+                            }
+                          break
+
+                        case "picasso":
+                            switch(property){
+                                case "color": 
+                                  const c = ["red","blue","black","yellow"];
+                                  var color = c[random(c.length)];
+                                  if(color == background){
+                                      color = c[random(c.length)];
+                                  }
+                                  constant1 = color;
+                                  return color
+                                  break
+                                case "height":
+                                  return 0;
+                                  break
+                                case "width":
+                                  return 0;
+                                  break 
+                                case "borderStyle":
+                                    return "solid"
+                                    break
+                                case "borderTopWidth":
+                                    return random(200);
+                                    break    
+                                case "borderBottomWidth":
+                                    return random(200);
+                                    break
+                                case "borderLeftWidth":
+                                    return random(200);
+                                    break
+                                case "borderRightWidth":
+                                  return random(200);
+                                  break    
+                                case "borderRightColor":
+                                    if(random(3)>1){
+                                        return constant1
+                                    } else {
+                                        return "transparent"
+                                    }
+                                    break
+                                case "borderLeftColor":
+                                    if(random(3)>1){
+                                        return constant1
+                                    } else {
+                                        return "transparent"
+                                    }
+                                    break
+                                case "borderTopColor":
+                                    if(random(3)>1){
+                                        return constant1
+                                    } else {
+                                        return "transparent"
+                                    }
+                                    break
+                                case "borderBottomColor":
+                                    if(random(3)>1){
+                                        return constant1
+                                    } else {
+                                        return "transparent"
+                                    }
+                                    break
+                                default:
+                                    return random(180);      
+                            }
+                          break
+                          
+                          case "calder":
+                            switch(property){
+                                case "color": 
+                                  const c = ["red","blue","black","yellow"];
+                                  var color = c[random(c.length)];
+                                  if(color == background){
+                                      color = c[random(c.length)];
+                                  }
+                                  constant1 = color;
+                                  return color
+                                  break
+                                case "height":
+                                  return 0;
+                                  break
+                                case "width":
+                                  return 0;
+                                  break 
+                                case "borderStyle":
+                                    return "solid"
+                                    break
+                                case "borderTopWidth":
+                                    return random(200);
+                                    break    
+                                case "borderBottomWidth":
+                                    return random(200);
+                                    break
+                                case "borderLeftWidth":
+                                    return random(200);
+                                    break
+                                case "borderRightWidth":
+                                  return random(200);
+                                  break    
+                                case "borderRightColor":
+                                    if(random(3)>1){
+                                        return constant1
+                                    } else {
+                                        return "transparent"
+                                    }
+                                    break
+                                case "borderLeftColor":
+                                    if(random(3)>1){
+                                        return constant1
+                                    } else {
+                                        return "transparent"
+                                    }
+                                    break
+                                case "borderTopColor":
+                                    if(random(3)>1){
+                                        return constant1
+                                    } else {
+                                        return "transparent"
+                                    }
+                                    break
+                                case "borderBottomColor":
+                                    if(random(3)>1){
+                                        return constant1
+                                    } else {
+                                        return "transparent"
+                                    }
+                                    break
+                                default:
+                                    return random(180);      
+                            }
+                          break
+
+
+                          case "kandinsky":
+                            switch(property){
+                                case "color": 
+                                  return "transparent"
+                                  break
+                                case "":
+                                  return 0;
+                                  break
+                                case "borderBottomWidth":
+                                  constant1 = random(400)+20;
+                                  return constant1;
+                                  break
+                                case "borderLeftWidth":
+                                  return Math.floor(constant1*.5);
+                                    break
+                                case "borderRightWidth":
+                                  return Math.floor(constant1*.5);
+                                    break
+                                case "borderStyle":
+                                    return "solid"
+                                    break
+                                case "borderRightColor":
+                                    return "transparent"
+                                    break
+                                case "borderLeftColor":
+                                    return "transparent"
+                                    break
+                                case "borderTopColor":
+                                    return "transparent"
+                                    break
+                                case "borderBottomColor":
+                                    const c = ["seafoamgreen","lightblue","blue","navy"];
+                                    var color = c[random(c.length)];
+                                    if(color == background){
+                                          color = c[random(c.length)];
+                                    }
+                                    return color    
+                                    break 
+                                case "rotate":  
+                                    return random(360)
+                                    break
+                                default:
+                                    return 0;      
+                            }
+                          break
+                      }
+                  
+              }
+              
+              
+              
+              //other event handers
+              canvas.addEventListener("drop",function(e){
+                  e.preventDefault();
+                  console.log("dropping!")
+                  var data = e.dataTransfer.getData("text");
+                  console.log(data);
+                  var shape = document.getElementById(data);
+                  shape.style.marginLeft = e.clientX;
+                  shape.style.marginTop = e.clientY;
+              })
+              
+              canvas.addEventListener("dragover",function(e){
+                  e.preventDefault();
+              })
+       
+    //title function
+            var title_container = document.getElementById("title_container");
+                title_container.style.display = "none";
+            var title_button = document.getElementById("note");
+                title_button.addEventListener("click",function(){
+                    console.log("toggling title");
+                    var title_container = document.getElementById("title_container");
+                    if(title_container.style.display == "block"){
+                        title_container.style.display = "none";
+                        
+                    } else {
+                        if(title_picker.innerHTML == ""){
+                            title_picker.innerHTML = make_up_a_name();
+                        }
+                        title_container.style.display = "block";
+                        
+                        document.getElementById("new_title").addEventListener("click", function(){
+                            const old_name = document.createElement("div");
+                                  old_name.innerHTML = title_picker.innerHTML;
+                            title_picker.innerHTML = make_up_a_name();
+                        })
+                    }
+                })
+              
+    //undo function          
+            var undo = document.getElementById("undo");
+                undo.addEventListener("click",function(){
+                     console.log("undoing");
+                     var id = "pop"+(i-1);
+                     var childToRemove = document.getElementById(id);
+                     document.body.removeChild(childToRemove)
+                     i--;
+                 })
+     //remove function         
+             var remove = document.getElementById("remove");
+                remove.addEventListener("click",function(){
+                     clearScreen();
+                 })
+     //clear screen
+            function clearScreen(){
+                console.log("clearing the screen");
+                     for(var j=0;j<i;j++){
+                        var id = "pop"+j;
+                        var childToRemove = document.getElementById(id);
+                        document.body.removeChild(childToRemove) 
+                     }
+                     i = 0;
+            }    
+                
+     //screenshot function/adding to picturebook
+              //screenshoot counter    
+              var y = 0;    
+                
+              var random_attribs = ["anon","anonymous","an undiscoverd genius","artist unknown","QED","X","J. Doe","nobody","nemo","null","0"]
+            
+              var screenshot = document.getElementById("screenshot");
+                screenshot.addEventListener("click",function(){
+                     console.log("taking a screenshot");
+                     var audio = document.getElementById("snap");
+                     audio.play();
+                     var permanent_buttons = document.getElementById("permanent_buttons");
+                     var vanishing_buttons = document.getElementById("vanishing_buttons");
+                     permanent_buttons.style.display = "none";
+                     vanishing_buttons.style.display = "none";
+                    html2canvas(document.body,width=window.innerWidth*.8).then(function(canvas) {
+                        var pictures = document.getElementById("pictures");
+                        var picturebook_container = document.getElementById("picturebook_container");
+                        //create a new image from canvas to add to picturebook
+                            canvas.id = "saved_image"+y;
+                            canvas.style.width = "40vw";
+                            canvas.style.height = "40vh";
+                        //create a new title;
+                        const current_title = document.getElementById("title_picker").innerHTML;
+                        var new_title;
+                        if(current_title == ""){
+                            new_title = make_up_a_name();
+                        } else {
+                            new_title = current_title;
+                        }
+                        var title = document.createElement("div");
+                            title.className = "title"
+                            title.innerHTML = new_title;
+                        var attribution = document.createElement("div");
+                            attribution.className = "attrib"
+                            attribution.innerHTML = "by " + random_attribs[random(random_attribs.length)]; 
+                        var download_button = document.createElement("a");
+                            download_button.id = "download_button"+y;
+                            download_button.className = "glyphicons glyphicons-cloud-download";
+                            download_button.style.fontSize = "5vw";
+                            download_button.style.marginTop = "30vh";
+                            download_button.style.marginLeft = "-10vw";
+                            download_button.style.color = "tan";
+                         
+                        var image_container = document.createElement("div");
+                            image_container.className = "image_container";
+                            image_container.href = canvas.toDataURL("image/png");
+                         
+                        image_container.appendChild(canvas);
+                        image_container.appendChild(title);
+                        image_container.appendChild(attribution)
+                        image_container.appendChild(download_button);
+                        pictures.appendChild(image_container);
+                        var button = document.getElementById("download_button"+y);
+                         
+                        var save_title = new_title.replace(/./g, function(c) {
+                            return c !== " " && c !== "," && c !== "." ? c : "_";
+                        }); 
+                        //clickhandler for image download 
+                        button.addEventListener("click",function(){
+                            console.log("downloading image!");
+                            downloadCanvas(this, "saved_image"+(y-1), save_title+'.png');
+                        })
+                        permanent_buttons.style.display = "block";
+                        vanishing_buttons.style.display = "block";
+                        y++; 
+                     });
+                 })    
+              
+        
+     //download image helper
+        function downloadCanvas(link, canvasId, filename) {
+            console.log(canvasId);
+            console.log(filename);
+            var canvas = document.getElementById("canvasId");
+            console.log(canvas);
+            link.href = document.getElementById(canvasId).toDataURL();
+            link.download = filename;
+        }
+        
+        
+     //picturebook function
+             var picturebook = document.getElementById("picturebook");
+                 picturebook.addEventListener("click", function(){
+                     var pictures = document.getElementById("pictures");
+                     if(pictures.style.display === "block"){
+                         pictures.style.display = "none";
+                     } else {
+                        pictures.style.display = "block";
+                        document.getElementById("artist_picker").style 
+                     }
+                 })
+                 
+     //about function
+             var about = document.getElementById("about");
+                 about.addEventListener("click", function(){
+                     if(about.childElementCount == 0){
+                         var about_window = document.createElement("div");
+                             about_window.id = "about_pop";
+                             var p1 = document.createElement("p");
+                                 p1.innerHTML = "mondernArtist was designed and coded by Laurie Finnerty"
+                             var p2 = document.createElement("p");
+                                 p2.innerHTML = "view on github";
+                             var p3 = document.createElement("p");
+                                 p3.innerHTML = "more projects";
+                     }
+                 })             
+        
+     });   
+    </script>
+</body>
+</html>    
